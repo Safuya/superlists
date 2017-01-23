@@ -1,5 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.expected_conditions import staleness_of
+from contextlib import contextmanager
 import unittest
 
 
@@ -16,6 +19,13 @@ class NewVisitorTest(unittest.TestCase):
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
+
+    @contextmanager
+    def wait_for_page_load(self, timeout=30):
+        old_page = self.browser.find_element_by_tag_name('html')
+        yield WebDriverWait(self.browser, timeout).until(
+                staleness_of(old_page)
+        )
 
     def test_can_start_list_and_retrieve_later(self):
         # Ellie has heard about a cool new online to-do app. She goes
@@ -39,7 +49,8 @@ class NewVisitorTest(unittest.TestCase):
         # When she hits enter, the page updates and now the page lists
         # "1: Buy peacock feathers to make a fly" as an item in the to-do list
         inputbox.send_keys(Keys.ENTER)
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
+        with self.wait_for_page_load(timeout=10):
+            self.check_for_row_in_list_table('1: Buy peacock feathers')
 
         # There is still a text box inviting her to add another item. She
         # enters "Use peacock feathers to make a fly" (Ellie is very
@@ -49,10 +60,12 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
 
         # The page updates again and now shows both items on her list
-        self.check_for_row_in_list_table('1: Buy peacock feathers')
-        self.check_for_row_in_list_table(
-                '2: Use peacock feathers to make a fly'
-        )
+        with self.wait_for_page_load(timeout=10):
+            self.check_for_row_in_list_table('1: Buy peacock feathers')
+            self.check_for_row_in_list_table(
+                 '2: Use peacock feathers to make a fly'
+            )
+
         self.fail('Finish the test')
 
         # Edith wonders whether the site will remember her list. Then she sees
