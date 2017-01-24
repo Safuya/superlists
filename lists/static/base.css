@@ -1,0 +1,25 @@
+body {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.page-header {
+    background-color: #582A72;
+    margin-top: 0;
+    padding: 20px 20px 20px 40px;
+}
+
+.page-header h1 {
+    color: #9775AA;
+    font-size: 36pt;
+    text-decoration: none;
+}
+
+#id_new_item {
+    margin-top: 2ex;
+}
+
+.content {
+    margin-left: 40px;
+}
+
