@@ -1,4 +1,2 @@
-Adjust model so that items are associated with different lists
-Add unique URLs for each list
-Add URLs for adding a new item to an existing list via POST
+Refactor duplication in urls.py
 
